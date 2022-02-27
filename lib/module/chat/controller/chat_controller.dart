@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:test_app/infra/constants/collection.dart';
 import 'package:test_app/infra/constants/globals.dart';
 import 'package:test_app/module/chat/model/message_chat.dart';
-import 'package:http/http.dart' as http;
 
 class ChatController extends GetxController {
   static ChatController to = Get.find();
@@ -21,7 +19,6 @@ class ChatController extends GetxController {
     return uploadTask;
   }
 
-  /// 메세지 보내기
   void sendMessage(String content, TypeMessage type, String groupChatId, String currentUserId, String peerId) {
     DocumentReference documentReference = firebaseFirestore
         .collection(Collection.messages)
@@ -42,40 +39,6 @@ class ChatController extends GetxController {
         documentReference,
         messageChat.toJson(),
       );
-    });
-  }
-
-  Future<void> sendPushMessage(String _token) async {
-    if (_token == null) {
-      print('Unable to send FCM message, no token exists.');
-      return;
-    }
-
-    try {
-      await http.post(
-        Uri.parse('https://api.rnfirebase.io/messaging/send'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: constructFCMPayload(_token),
-      );
-      print('FCM request for device sent!');
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  String constructFCMPayload(String? token) {
-    return jsonEncode({
-      'token': token,
-      'data': {
-        'via': 'FlutterFire Cloud Messaging!!!',
-        // 'count': _messageCount.toString(),
-      },
-      'notification': {
-        'title': 'Hello FlutterFire!',
-        // 'body': 'This notification (#$_messageCount) was created via FCM!',
-      },
     });
   }
 

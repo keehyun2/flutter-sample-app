@@ -135,9 +135,7 @@ class ChatScreenState extends State<ChatScreen> {
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
       chatController.sendMessage(content, type, groupChatId, currentUserId, widget.peerId);
-      if(listScrollController.hasClients){
-        listScrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-      }
+      listScrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send', backgroundColor: AppThemes.greyColor);
     }

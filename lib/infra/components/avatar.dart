@@ -8,23 +8,24 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (photoUrl == null) {
-      return CircleAvatar(
-          radius: 60.0,
-          backgroundColor: Colors.white,
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/default.png',
-              fit: BoxFit.cover,
-              width: 120.0,
-              height: 120.0,
-            ),
-          ));
+      return Hero(
+        tag: 'App Logo',
+        child: CircleAvatar(
+            radius: 70.0,
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/default.png',
+                fit: BoxFit.cover,
+                width: 120.0,
+                height: 120.0,
+              ),
+            )),
+      );
     }else{
       return Hero(
         tag: 'User Avatar Image',
         child: CircleAvatar(
-            radius: 60.0,
-            backgroundColor: Colors.white,
+            radius: 70.0,
             child: ClipOval(
               child: Image.network(
                 photoUrl!,

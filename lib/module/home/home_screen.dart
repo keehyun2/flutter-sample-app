@@ -105,8 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _innerScreenMe() {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
+          const SizedBox(height: 120),
           Avatar(photoUrl: authController.firebaseUser.value!.photoURL),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
