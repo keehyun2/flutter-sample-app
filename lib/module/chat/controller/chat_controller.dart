@@ -21,9 +21,9 @@ class ChatController extends GetxController {
 
   void sendMessage(String content, TypeMessage type, String groupChatId, String currentUserId, String peerId) {
     DocumentReference documentReference = firebaseFirestore
-        .collection(Collection.messages)
+        .collection(Collection.chatRoom)
         .doc(groupChatId)
-        .collection(groupChatId)
+        .collection(Collection.messages)
         .doc(DateTime.now().millisecondsSinceEpoch.toString());
 
     MessageChat messageChat = MessageChat(
@@ -45,9 +45,9 @@ class ChatController extends GetxController {
   /// 채팅 메세지 조회
   Stream<QuerySnapshot> getChatStream(String groupChatId, int limit) {
     return firebaseFirestore
-        .collection(Collection.messages)
+        .collection(Collection.chatRoom)
         .doc(groupChatId)
-        .collection(groupChatId)
+        .collection(Collection.messages)
         .orderBy(Globals.timestamp, descending: true)
         .limit(limit)
         .snapshots();
