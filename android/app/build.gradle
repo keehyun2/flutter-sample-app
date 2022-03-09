@@ -32,6 +32,9 @@ if (keyPropFile.exists()) {
     keyPropFile.withReader('UTF-8') { reader -> keyProp.load(reader) }
 }
 
+def debugApkMinify = System.getenv('DEBUG_APK_MINIFY') ?: "N"
+println "DEBUG_APK_MINIFY: ${debugApkMinify}"
+
 android {
     compileSdkVersion 31
 
@@ -79,12 +82,21 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            if(debugApkMinify == "Y") {
+                print "debug apk minify";
+                shrinkResources true
+                minifyEnabled true
+                useProguard true
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
         }
         if (keyProp.containsKey('storeFile')) {
             release {
                 // Signing with the debug keys for now, so `flutter run --release` works.
                 signingConfig signingConfigs.release
-                minifyEnabled false
+                shrinkResources true
+                minifyEnabled true
+                useProguard true
                 proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             }
         }

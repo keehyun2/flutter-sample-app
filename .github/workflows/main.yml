@@ -9,6 +9,9 @@ on:
 #    tags:
 #      - '*'
 
+env:
+  DEBUG_APK_MINIFY: 'Y'
+
 jobs:
   build:
     name: Build APK
@@ -51,8 +54,16 @@ jobs:
 #        artifacts: "build/app/outputs/apk/debug/*.apk"
 #        token: ${{ secrets.TOKEN }}
 
-    - name: upload andorid debug APK
-      uses: actions/upload-artifact@v2
+#    - name: upload andorid debug APK
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: debug-apk
+#        path: build/app/outputs/apk/debug/*.apk
+
+    - name: upload artifact to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
       with:
-        name: debug-apk
-        path: build/app/outputs/apk/debug/*.apk
+        appId: ${{secrets.FIREBASE_APP_ID}}
+        token: ${{secrets.FIREBASE_TOKEN}}
+        groups: sample-app-test-group
+        file: build/app/outputs/apk/debug/apk-debug.apk
