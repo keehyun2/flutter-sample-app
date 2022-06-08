@@ -42,7 +42,7 @@ dependencies:
   photo_view: ^0.13.0
 
   flutter_bloc: ^8.0.1
-  freezed_annotation: ^2.0.3
+  json_serializable: ^4.1.4
 
 dev_dependencies:
   flutter_test:
@@ -51,8 +51,6 @@ dev_dependencies:
   flutter_lints: ^1.0.0
 
   build_runner:
-  json_serializable:
-  freezed: ^2.0.3
 
 flutter:
   uses-material-design: true

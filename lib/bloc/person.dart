@@ -1,15 +1,19 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'person.freezed.dart';
 part 'person.g.dart';
 
-@freezed
-class Person with _$Person {
-  factory Person({
-    required int id,
-    required String name,
-    required int age,
-  }) = _Person;
+@JsonSerializable()
+class Person {
+  final id;
+  final name;
+  final age;
 
-  factory Person.fromJson(Map<String, dynamic> json) => _$PersonFromJson(json);
+  Person(this.id, this.name, this.age);
+
+  factory Person.fromJson(String id, Map<String, dynamic> json) => _$PersonFromJson(json)..id;
+  factory Person.fromFire(DocumentSnapshot doc) => Person.fromJson(doc.id, doc.data() as Map<String, dynamic>);
+
+  Map<String, dynamic> toJson() => _$PersonToJson(this);
+
 }

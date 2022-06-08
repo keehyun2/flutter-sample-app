@@ -83,6 +83,7 @@ class AuthController extends GetxController {
     };
 
     PhoneVerificationFailed verificationFailed = (FirebaseAuthException authException) {
+      log.e('Code: ${authException.code}. Message: ${authException.message}'); /// app-1-544722593006-ios-889f61ba0ed2c7afab7fff
       showSnackbar('verification failed', 'aPhone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
     };
 
