@@ -22,3 +22,7 @@ flutter pub get
 cd ios/
 arch -x86_64 pod install
 ```
+
+4. api key 보안
+- android : key.properties 에 보관
+- ios : Release.xcconfig , Debug.xcconfig 에 보관

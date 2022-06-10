@@ -30,10 +30,12 @@ def keyProp = new Properties()
 def keyPropFile = rootProject.file('key.properties')
 if (keyPropFile.exists()) {
     keyPropFile.withReader('UTF-8') { reader -> keyProp.load(reader) }
+    println "GRADLE - key prop loaded"
 }
+def googleMapsApiKey = keyProp.getProperty("googleMapsApiKey")
 
 def debugApkMinify = System.getenv('DEBUG_APK_MINIFY') ?: "N"
-println "DEBUG_APK_MINIFY: ${debugApkMinify}"
+println "GRADLE - DEBUG_APK_MINIFY: ${debugApkMinify}"
 
 android {
     compileSdkVersion 31
@@ -59,6 +61,10 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+
+        manifestPlaceholders = [
+            googleMapsApiKey: googleMapsApiKey
+        ]
     }
 
     signingConfigs {
@@ -112,4 +118,4 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 }
 
-
+apply plugin: 'com.google.firebase.crashlytics'

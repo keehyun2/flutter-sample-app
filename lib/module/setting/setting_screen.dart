@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:test_app/module/login/controller/auth_controller.dart';
 
@@ -28,7 +29,16 @@ class SettingScreen extends StatelessWidget {
                 loginController.signOut();
               },
             ),
-          )
+          ),
+          ListTile(
+            title: const Text('강제종료 테스트'),
+            trailing: ElevatedButton(
+              child: const Text('crash'),
+              onPressed: () async {
+                FirebaseCrashlytics.instance.crash();
+              },
+            ),
+          ),
         ],
       ),
     );

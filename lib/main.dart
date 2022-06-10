@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:country_code_picker/country_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +14,15 @@ import 'package:test_app/module/login/loading_screen.dart';
 import 'package:test_app/module/login/login_screen.dart';
 import 'package:test_app/module/map/map_screen.dart';
 import 'package:test_app/module/setting/setting_screen.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  runZonedGuarded(() {
+    runApp(const MyApp());
+  }, FirebaseCrashlytics.instance.recordError);
 }
 
 class MyApp extends StatelessWidget {
@@ -33,6 +39,7 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: const [
         CountryLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
       getPages: [
