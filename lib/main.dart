@@ -15,6 +15,7 @@ import 'package:test_app/module/login/login_screen.dart';
 import 'package:test_app/module/map/map_screen.dart';
 import 'package:test_app/module/setting/setting_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:test_app/module/test/google_maps_clone_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/map', page: () => const MapScreen()),
         GetPage(name: '/loading', page: () => LoadingScreen()),
         GetPage(name: '/chat', page: () => ChatScreen()),
+        GetPage(name: '/test01', page: () => GoogleMapsClonePage()),
         // GetPage(name: '/userChat', page: () => const UserChatScreen()),
       ],
       debugShowCheckedModeBanner: false,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:test_app/infra/helpers/logger.dart';
 import 'package:test_app/infra/helpers/validator.dart';
 import 'package:test_app/module/login/controller/auth_controller.dart';
@@ -166,6 +167,11 @@ class _LoginScreenState extends State<LoginScreen> {
           child: const Text('google login'),
           onPressed: () {
             authController.signInWithGoogle();
+          },
+        ),ElevatedButton(
+          child: const Text('google clone'),
+          onPressed: () {
+            Get.toNamed('/test01');
           },
         ),
         // ElevatedButton(
