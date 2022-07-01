@@ -25,18 +25,14 @@ class SettingScreen extends StatelessWidget {
             title: const Text('sign out'),
             trailing: ElevatedButton(
               child: const Text('sign out'),
-              onPressed: () async {
-                loginController.signOut();
-              },
+              onPressed: () async => loginController.signOut(),
             ),
           ),
           ListTile(
             title: const Text('강제종료 테스트'),
             trailing: ElevatedButton(
               child: const Text('crash'),
-              onPressed: () async {
-                FirebaseCrashlytics.instance.crash();
-              },
+              onPressed: () async => FirebaseCrashlytics.instance.crash(),
             ),
           ),
         ],
