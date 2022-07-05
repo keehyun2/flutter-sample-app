@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:test_app/module/map/map_controller.dart';
 
 class GoogleMapsClonePage extends StatefulWidget {
   const GoogleMapsClonePage({Key? key}) : super(key: key);
@@ -10,8 +12,14 @@ class GoogleMapsClonePage extends StatefulWidget {
 }
 
 class _GoogleMapsClonePageState extends State<GoogleMapsClonePage> {
+  MapController mapController = MapController.to;
 
-  var opacity = 0.0;
+  var opacity = 1.0;
+
+  final DraggableScrollableController _draggableScrollableController =
+      DraggableScrollableController();
+  late ScrollController _scrollController;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -25,114 +33,191 @@ class _GoogleMapsClonePageState extends State<GoogleMapsClonePage> {
 
   @override
   Widget build(BuildContext context) {
-    double appbarSize = 0.08;
-    double offsetVisibility = 100.0;
-    bool FAB_visibility = true;
-
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.grey,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white.withOpacity(.60),
-        selectedFontSize: 14,
-        unselectedFontSize: 14,
-        currentIndex: 0, //현재 선택된 Index
-        onTap: (int index) {
-        },
-        items: const [
-          BottomNavigationBarItem(
-            label: 'Favorites',
-            icon: Icon(Icons.favorite),
-          ),
-          BottomNavigationBarItem(
-            label: 'Favorites',
-            icon: Icon(Icons.favorite),
-          ),
-          BottomNavigationBarItem(
-            label: 'Favorites',
-            icon: Icon(Icons.favorite),
-          ),
-        ],
-      ),
+      backgroundColor: Colors.white,
+      bottomNavigationBar: _buildBottomNavigationBar(context),
       body: Stack(
         children: <Widget>[
-          CustomGoogleMap(),
+          // CustomGoogleMap(),
           Opacity(
             opacity: opacity,
-            child: Container(
-              color: Colors.white,
+            child: const GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(37.42796133580664, -122.085749655962),
+                zoom: 14.4746,
+              ),
             ),
           ),
-          NotificationListener<DraggableScrollableNotification>(
-            onNotification: (DraggableScrollableNotification dsNotification) {
-              if (dsNotification.extent >= 0.6) {
-                var ll = min((dsNotification.extent - 0.6) * 5.0, 1.0);
-                setState(() {
-                  opacity = ll;
-                });
-              } else {
-                opacity = 0.0;
-              }
-              return true;
-            },
-            child: DraggableScrollableSheet(
-              // snap: true, // 시뮬레이터에서 이상하게 작동함. 기기에서 테스트해봐야함.
-              snapSizes: const [0.5, 0.8],
-              maxChildSize: 1 - (100 / MediaQuery.of(context).size.height), // 헤더 비율
-              initialChildSize: 0.30,
-              minChildSize: 0.1,
-              // expand: false,
-              builder: (context, scrollController) {
-                return ListView(
-                  controller: scrollController,
-                  padding: EdgeInsets.zero,
-                  children: [CustomScrollViewContent()],
-                );
-              },
-            ),
-          ),
-          CustomHeader(),
+          // const CustomBottomSheet(min: 0, max:0.7),
+          _bottomSheet(context),
+          CustomSearchContainer(),
         ],
       ),
     );
   }
-}
 
-/// Google Map in the background
-class CustomGoogleMap extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.blue[50],
-      child: const Center(child: Text('Google Map here')),
+  Widget _bottomSheet(BuildContext context) {
+
+    double h = MediaQuery.of(context).size.height;
+    double top = MediaQuery.of(context).padding.top;
+    // print('h $h, top $top');
+
+    return NotificationListener<DraggableScrollableNotification>(
+      onNotification: (DraggableScrollableNotification dsNotification) {
+        /// DraggableScrollableSheet scroll event 처리
+        setState(() {
+          double ll = (dsNotification.extent >= 0.7)
+              ? min((dsNotification.extent - 0.7) * 10.0, 1.0)
+              : 0.0;
+          opacity = 1.0 - ll;
+          mapController.spreadFlag.value = (opacity == 0);
+          // print('${dsNotification.extent}, ${mapController.spreadFlag.value}');
+        });
+        return true;
+      },
+      child: DraggableScrollableSheet(
+        controller: _draggableScrollableController,
+
+        // snap: true, // 시뮬레이터에서 이상하게 작동함. 기기에서 테스트해봐야함.
+        // snapSizes: const [0.5, 0.8],
+        maxChildSize: 1 - (98 / (h-56)), // 바텀 네비 높이 차감
+        initialChildSize: 0.1,
+        minChildSize: 0.0,
+        // expand: false,
+        builder: (context, scrollController) {
+          _scrollController = scrollController;
+          return MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: Scrollbar(
+              trackVisibility: false,
+              // isAlwaysShown: true,
+              controller: _scrollController,
+              // hoverThickness: 10.0,
+              // thickness: 20.0,
+              child: Container(
+                // color: Colors.white,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey, //New
+                        blurRadius: 3.0,
+                        offset: Offset(0, 1))
+                  ],
+                ),
+                child: ListView(
+                  controller: _scrollController,
+                  padding: EdgeInsets.zero,
+                  shrinkWrap:true,
+                  children: <Widget>[
+                    const SizedBox(height: 12),
+                    Center(
+                      child: Container(
+                        height: 5,
+                        width: 30,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200], borderRadius: BorderRadius.circular(16)),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomExploreBerlin(),
+                    const SizedBox(height: 16),
+                    CustomHorizontallyScrollingRestaurants(),
+                    const SizedBox(height: 24),
+                    CustomFeaturedListsText(),
+                    const SizedBox(height: 16),
+                    CustomFeaturedItemsGrid(),
+                    const SizedBox(height: 24),
+                    CustomRecentPhotosText(),
+                    const SizedBox(height: 16),
+                    CustomRecentPhotoLarge(),
+                    const SizedBox(height: 12),
+                    CustomRecentPhotosSmall(),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
-}
 
-/// Search text field plus the horizontally scrolling categories below the text field
-class CustomHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        CustomSearchContainer(),
-        // CustomSearchCategories(),
+  /// 하단 네비게이션 바
+  Widget _buildBottomNavigationBar(context) {
+    return BottomNavigationBar(
+
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.grey,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white.withOpacity(.60),
+      selectedFontSize: 14,
+      unselectedFontSize: 14,
+      currentIndex: _selectedIndex,
+      //현재 선택된 Index
+      onTap: (int index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+        // if(_draggableScrollableController.size > 0.3){
+        //   _draggableScrollableController.jumpTo(0.5);
+
+        _scrollController.jumpTo(0);
+        _draggableScrollableController.jumpTo(0.1);
+      },
+      items: const [
+        BottomNavigationBarItem(
+          label: 'Favorites',
+          icon: Icon(Icons.favorite),
+        ),
+        BottomNavigationBarItem(
+          label: 'Favorites',
+          icon: Icon(Icons.favorite),
+        ),
+        BottomNavigationBarItem(
+          label: 'Favorites',
+          icon: Icon(Icons.favorite),
+        ),
       ],
     );
   }
 }
 
 class CustomSearchContainer extends StatelessWidget {
+  MapController mapController = MapController.to;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.fromLTRB(16, 40, 16, 8),
-      //adjust "40" according to the status bar size
+      decoration: mapController.spreadFlag.value
+      // decoration: false
+          ? const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey, //New
+                    blurRadius: 3.0,
+                    offset: Offset(0, 2))
+              ],
+            )
+          : null,
       child: Container(
+        // margin: const EdgeInsets.fromLTRB(16, 40, 16, 8),
         height: 50,
         decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(6)),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          // border: BoxBorder().,
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.grey, //New
+                blurRadius: 3.0,
+                offset: Offset(0, 1))
+          ],
+        ),
         child: Row(
           children: <Widget>[
             CustomTextField(),
@@ -175,30 +260,6 @@ class CustomUserAvatar extends StatelessWidget {
   }
 }
 
-class CustomSearchCategories extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: <Widget>[
-          const SizedBox(width: 16),
-          CustomCategoryChip(Icons.fastfood, 'Takeout'),
-          const SizedBox(width: 12),
-          CustomCategoryChip(Icons.directions_bike, 'Delivery'),
-          const SizedBox(width: 12),
-          CustomCategoryChip(Icons.local_gas_station, 'Gas'),
-          const SizedBox(width: 12),
-          CustomCategoryChip(Icons.shopping_cart, 'Groceries'),
-          const SizedBox(width: 12),
-          CustomCategoryChip(Icons.local_pharmacy, 'Pharmacies'),
-          const SizedBox(width: 12),
-        ],
-      ),
-    );
-  }
-}
-
 class CustomCategoryChip extends StatelessWidget {
   final IconData iconData;
   final String title;
@@ -220,63 +281,6 @@ class CustomCategoryChip extends StatelessWidget {
   }
 }
 
-/// Content of the DraggableBottomSheet's child SingleChildScrollView
-class CustomScrollViewContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0.0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      margin: const EdgeInsets.all(0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: CustomInnerContent(),
-      ),
-    );
-  }
-}
-
-class CustomInnerContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const SizedBox(height: 12),
-        CustomDraggingHandle(),
-        const SizedBox(height: 16),
-        CustomExploreBerlin(),
-        const SizedBox(height: 16),
-        CustomHorizontallyScrollingRestaurants(),
-        const SizedBox(height: 24),
-        CustomFeaturedListsText(),
-        const SizedBox(height: 16),
-        CustomFeaturedItemsGrid(),
-        const SizedBox(height: 24),
-        CustomRecentPhotosText(),
-        const SizedBox(height: 16),
-        CustomRecentPhotoLarge(),
-        const SizedBox(height: 12),
-        CustomRecentPhotosSmall(),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-}
-
-class CustomDraggingHandle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 5,
-      width: 30,
-      decoration: BoxDecoration(
-          color: Colors.grey[200], borderRadius: BorderRadius.circular(16)),
-    );
-  }
-}
-
 class CustomExploreBerlin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -284,7 +288,7 @@ class CustomExploreBerlin extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         const Text('Explore Berlin',
-            style: const TextStyle(fontSize: 22, color: Colors.black45)),
+            style: TextStyle(fontSize: 22, color: Colors.black45)),
         const SizedBox(width: 8),
         Container(
           height: 24,

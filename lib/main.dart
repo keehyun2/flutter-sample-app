@@ -12,6 +12,7 @@ import 'package:test_app/module/home/home_screen.dart';
 import 'package:test_app/module/login/controller/auth_controller.dart';
 import 'package:test_app/module/login/loading_screen.dart';
 import 'package:test_app/module/login/login_screen.dart';
+import 'package:test_app/module/map/map_controller.dart';
 import 'package:test_app/module/map/map_screen.dart';
 import 'package:test_app/module/setting/setting_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         Get.lazyPut<AuthController>(() => AuthController());
         Get.lazyPut<UserChatController>(() => UserChatController());
         Get.lazyPut<ChatController>(() => ChatController());
+        Get.lazyPut<MapController>(() => MapController());
       }),
       initialRoute: '/loading',
     );
