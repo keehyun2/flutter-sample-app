@@ -39,9 +39,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void initDynamicLinks() {
-    _streamSubscription = authController.dynamicLinks.onLink.listen((dynamicLinkData) {
+    _streamSubscription =
+        authController.dynamicLinks.onLink.listen((dynamicLinkData) {
       log.i('FirebaseDynamicLinks 리스너 실행됨.');
-      authController.loginWithEmailLink(_emailController.text, dynamicLinkData.link);
+      authController.loginWithEmailLink(
+          _emailController.text, dynamicLinkData.link);
     }, onError: (error) => log.e(error.toString()));
   }
 
@@ -121,16 +123,21 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () {
-              if (_emailKey.currentState!.validate() && _passwordKey.currentState!.validate()) {
-                authController.registerEmail(_emailController.text.trim(), _passwordController.text.trim());
+              if (_emailKey.currentState!.validate() &&
+                  _passwordKey.currentState!.validate()) {
+                authController.registerEmail(_emailController.text.trim(),
+                    _passwordController.text.trim());
               }
             },
             child: const Text('Sign Up'),
           ),
           ElevatedButton(
             onPressed: () {
-              if (_emailKey.currentState!.validate() && _passwordKey.currentState!.validate()) {
-                authController.loginEmailAndPassword(_emailController.text.trim(), _passwordController.text.trim());
+              if (_emailKey.currentState!.validate() &&
+                  _passwordKey.currentState!.validate()) {
+                authController.loginEmailAndPassword(
+                    _emailController.text.trim(),
+                    _passwordController.text.trim());
               }
             },
             child: const Text('Login'),
@@ -138,7 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ElevatedButton(
             onPressed: () {
               if (_emailKey.currentState!.validate()) {
-                authController.sendPasswordResetEmail(_emailController.text.trim());
+                authController
+                    .sendPasswordResetEmail(_emailController.text.trim());
               }
             },
             child: const Text('send password reset email'),
@@ -147,7 +155,8 @@ class _LoginScreenState extends State<LoginScreen> {
             child: const Text('signInWithEmailAndLink'),
             onPressed: () async {
               if (_emailKey.currentState!.validate()) {
-                authController.sendSignInLinkToEmail(_emailController.text.trim());
+                authController
+                    .sendSignInLinkToEmail(_emailController.text.trim());
               }
             },
           )
@@ -168,10 +177,17 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () {
             authController.signInWithGoogle();
           },
-        ),ElevatedButton(
+        ),
+        ElevatedButton(
           child: const Text('google clone'),
           onPressed: () {
             Get.toNamed('/test01');
+          },
+        ),
+        ElevatedButton(
+          child: const Text('page view'),
+          onPressed: () {
+            Get.toNamed('/test02');
           },
         ),
         // ElevatedButton(
@@ -210,7 +226,8 @@ class _LoginScreenState extends State<LoginScreen> {
               child: TextFormField(
                 keyboardType: TextInputType.phone,
                 controller: _phoneNumberController,
-                decoration: const InputDecoration(labelText: 'Phone number(xxx-xxxx-xxxx)'),
+                decoration: const InputDecoration(
+                    labelText: 'Phone number(xxx-xxxx-xxxx)'),
               ),
             ),
           ],
